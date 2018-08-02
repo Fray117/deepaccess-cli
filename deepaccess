@@ -1,0 +1,52 @@
+#!/bin/bash
+#Kernel by Achon666ju5t - Extreme Crew
+#Developed by Fray117 - RESET
+NC='\033[0m'
+GREEN='\e[38;5;82m'
+CYAN='\e[38;5;45m'
+RED='\e[38;5;196m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+START(){
+  for URL in $(cat $LIST); do
+    REQUEST=$(curl -A $UA -I -s $URL)
+    if [[ $REQUEST =~ "200 OK" ]]; then
+      echo "$URL" >> CHECKED.TMP
+      printf "${CYAN}$URL -> CONNECTED${NC}\n"
+      CHECK=$(curl -A $UA -sN $URL | grep $KEY)
+      if [[ "$CHECK"="$KEY" ]]; then
+        printf "${GREEN}$URL -> VALID${NC}\n"
+      fi
+    else
+      printf "${RED}$URL -> FALSE${NC}\n"
+    fi
+  done
+}
+LOGO(){
+  printf "${GREEN}"
+  printf "    ____                  ___                           \n"
+  printf "   / __ \___  ___  ____  /   | _____________  __________\n"
+  printf "  / / / / _ \/ _ \/ __ \/ /| |/ ___/ ___/ _ \/ ___/ ___/\n"
+  printf " / /_/ /  __/  __/ /_/ / ___ / /__/ /__/  __(__  |__  ) \n"
+  printf "/_____/\___/\___/ .___/_/  |_\___/\___/\___/____/____/  \n"
+  printf "               /_/         ${YELLOW}Version 0.3${NC}    \n"
+  printf "\n"
+}
+clear
+INIT(){
+  clear
+  LOGO
+  read -p 'User Agents: ' UA
+  read -p 'Content in Pages: ' KEY
+  read -p 'URL Lists: ' LIST
+  if [ ! -f $LIST ]; then
+      echo "404 File Not Found"
+  else
+      START
+      sort -fsu CHECKED.TMP > FILE.TMP
+      mv FILE.TMP LIVE.TXT
+      rm -rf CHECKED.TMP
+      exit
+  fi
+}
+INIT
